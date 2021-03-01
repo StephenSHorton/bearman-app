@@ -1,0 +1,70 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@layer components {
+	body {
+		@apply text-white bg-gray-800;
+	}
+	header {
+		@apply font-bold text-5xl text-center m-10;
+	}
+
+	/* Misc */
+	.mt-navbar {
+		@apply mt-20;
+	}
+
+	/* Links */
+	.link {
+		@apply px-3 py-2 text-sm font-medium border-transparent border-b-2 pt-2 hover:border-white;
+	}
+	.link.active {
+		@apply bg-gray-900 hover:border-transparent;
+	}
+
+	/* Buttons */
+	button {
+		@apply py-2 px-4 font-semibold bg-gray-400 rounded-lg shadow-md focus:ring-2 focus:ring-opacity-75;
+	}
+	.btn-primary {
+		@apply bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-blue-400;
+	}
+	.btn-danger {
+		@apply bg-red-500 hover:bg-red-600 focus:outline-none  focus:ring-red-400;
+	}
+	.btn-success {
+		@apply bg-green-500 hover:bg-green-600 focus:outline-none  focus:ring-green-400;
+	}
+	.btn-info {
+		@apply bg-indigo-600 hover:bg-indigo-700 focus:outline-none  focus:ring-indigo-400;
+	}
+
+	/* Input */
+	input[type="text"],
+	input[type="email"],
+	input[type="password"],
+	input[type="number"],
+	select,
+	textarea {
+		@apply border-b-4 border-blue-600 bg-transparent focus:bg-gray-100;
+	}
+	input[type="checkbox"] {
+		@apply m-4;
+	}
+}
+
+.animation-reverse {
+	animation-direction: reverse;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+	outline: none;
+	color: black;
+}
