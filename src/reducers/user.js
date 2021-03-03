@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { auth, provider } from "../config/firebase";
+import { auth } from "../config/firebase";
+import Cookies from "js-cookie";
 
 // console.log(
 //     `%c LOGIN_FAILURE: ${err.message} `,
@@ -42,27 +43,50 @@ export const {
 	logout,
 } = user.actions;
 
-export const signInOld = () => {
+const postIdTokenToSessionLogin = (endpoint, idToken, csrfToken) => {
+	const requestOptions = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ idToken, csrfToken }),
+	};
+	fetch(`https://bearman-app-eaf20.web.app${endpoint}`, requestOptions)
+		.then((res) => res.json())
+		.then(
+			(result) => result,
+			(error) => error
+		);
+};
+
+export const signInUser = (email, pass) => {
 	return (dispatch) => {
 		dispatch(loginRequest());
-		auth.signInWithPopup(provider)
-			.then((res) => {
-				const user = res.user;
-				user.getIdTokenResult().then((idTokenResult) => {
-					const payload = {
-						firstName: user.displayName.split(" ")[0],
-						lastName: user.displayName.split(" ")[1],
-						email: user.email,
-						photoURL: user.photoURL,
-					};
-					if (idTokenResult.claims.admin === true) {
+		// As httpOnly cookies are to be used, do not persist any state client side.
+		auth.setPersistence(auth.Auth.Persistence.NONE);
+		// When the user signs in with email and password.
+		auth.signInWithEmailAndPassword("user@example.com", "password")
+			.then((user) => {
+				// Get the user's ID token as it is needed to exchange for a session cookie.
+				return user.getIdToken().then((idToken) => {
+					// Session login endpoint is queried and the session cookie is set.
+					const payload = { isAdmin: false };
+					if (idToken.claims.admin === true) {
 						payload.isAdmin = true;
-						dispatch(loginSuccess(payload));
-					} else {
-						payload.isAdmin = false;
-						dispatch(loginSuccess(payload));
 					}
+					dispatch(loginSuccess(payload));
+					const csrfToken = Cookies.get("csrfToken");
+					return postIdTokenToSessionLogin(
+						"/sessionLogin",
+						idToken,
+						csrfToken
+					);
 				});
+			})
+			.then(() => {
+				// A page redirect would suffice as the persistence is set to NONE.
+				return auth.signOut();
+			})
+			.then(() => {
+				window.location.assign("/");
 			})
 			.catch((err) => {
 				console.error(
@@ -76,64 +100,19 @@ export const signInOld = () => {
 	};
 };
 
-export const signIn = (email, password) => {
+export const signOutUser = () => {
 	return (dispatch) => {
 		dispatch(loginRequest());
-		auth.signInWithEmailAndPassword(email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				// dispatch(loginSuccess(user))
-				console.log(user);
-				return;
-				// ...
+		//remove session cookie?
+		auth.signOut()
+			.then(() => {
+				dispatch(logout());
 			})
 			.catch((err) => {
+				console.error(err);
 				dispatch(loginFailure());
-				return `Error ${err.code}: ${err.message}`;
 			});
 	};
 };
-
-// export const signOut = () => {
-// 	return (dispatch) => {
-// 		dispatch(loginRequest());
-// 		auth.signOut()
-// 			.then(() => {
-// 				dispatch(logout());
-// 			})
-// 			.catch((err) => {
-// 				console.error(err);
-// 				dispatch(loginFailure());
-// 			});
-// 	};
-// };
-
-// export const checkLoggedStatus = () => {
-// 	return (dispatch) => {
-// 		dispatch(loginRequest());
-// 		const user = auth.currentUser;
-// 		if (user) {
-// 			user.getIdTokenResult().then((idTokenResult) => {
-// 				const payload = {
-// 					firstName: user.displayName.split(" ")[0],
-// 					lastName: user.displayName.split(" ")[1],
-// 					email: user.email,
-// 					photoURL: user.photoURL,
-// 				};
-// 				if (idTokenResult.claims.admin === true) {
-// 					payload.isAdmin = true;
-// 					dispatch(loginSuccess(payload));
-// 				} else {
-// 					payload.isAdmin = false;
-// 					dispatch(loginSuccess(payload));
-// 				}
-// 			});
-// 		} else {
-// 			console.log("Not logged in");
-// 			dispatch(loginFailure());
-// 		}
-// 	};
-// };
 
 export default user;
