@@ -1,6 +1,8 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const { initializeApp } = require("firebase-admin");
 const db = admin.firestore();
+const app = initializeApp();
 
 //how to call functions
 //ex. const addAdminRole = functions.httpsCallable("addAdminRole"); >>>> functions comes from 'firebase.functions()' you can export this from the firebase config
@@ -36,10 +38,7 @@ exports.addAdminRole = functions.https.onCall((data, context) => {
 		});
 });
 
-exports.sessionLogin = functions.https.onRequest((req, res) => {
-	if (req.method !== "POST") {
-		return res.status(500).send("NOT ALLOWED");
-	}
+app.post("/sessionLogin", (req, res) => {
 	// Get the ID token passed and the CSRF token.
 	const idToken = req.body.idToken.toString();
 	const csrfToken = req.body.csrfToken.toString();
