@@ -1,42 +1,12 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const { initializeApp } = require("firebase-admin");
-const db = admin.firestore();
-const app = initializeApp();
-
-//how to call functions
-//ex. const addAdminRole = functions.httpsCallable("addAdminRole"); >>>> functions comes from 'firebase.functions()' you can export this from the firebase config
-// addAdminRole({ email })
-//  .then((res) => console.log(res))
-//  .catch((err) => console.log(err));
-
-exports.addAdminRole = functions.https.onCall((data, context) => {
-	// check request is made by an admin
-	if (context.auth.token.admin !== true) {
-		return { error: "Only admins can add other admins" };
-	}
-	// get user and add admin custom claim
-	return admin
-		.auth()
-		.getUserByEmail(data.email)
-		.then((user) => {
-			//also add this data to database
-			db.collection("Users")
-				.doc(user.uid)
-				.set({ isAdmin: true }, { merge: true });
-			return admin.auth().setCustomUserClaims(user.uid, {
-				isAdmin: true,
-			});
-		})
-		.then(() => {
-			return {
-				message: `Success! ${data.email} has been made an admin.`,
-			};
-		})
-		.catch((err) => {
-			return err;
-		});
-});
+const express = require("express");
+const cors = require("cors")({ origin: true });
+// const firebase = admin.initializeApp(); //next line is replacement (don't need firebase atm)
+admin.initializeApp();
+// const db = admin.firestore();
+const app = express();
+app.use(cors);
 
 app.post("/sessionLogin", (req, res) => {
 	// Get the ID token passed and the CSRF token.
@@ -71,4 +41,30 @@ app.post("/sessionLogin", (req, res) => {
 				res.status(401).send("UNAUTHORIZED REQUEST!");
 			}
 		);
+});
+
+exports.app = functions.https.onRequest(app);
+
+exports.addAdminRole = functions.https.onCall((data, context) => {
+	// check request is made by an admin
+	if (context.auth.token.isAdmin !== false) {
+		return { error: "Only admins can add other admins" };
+	}
+	// get user and add admin custom claim
+	return admin
+		.auth()
+		.getUserByEmail(data.email)
+		.then((user) => {
+			return admin.auth().setCustomUserClaims(user.uid, {
+				isAdmin: true,
+			});
+		})
+		.then(() => {
+			return {
+				message: `Success! ${data.email} has been made an admin.`,
+			};
+		})
+		.catch((err) => {
+			return err;
+		});
 });
