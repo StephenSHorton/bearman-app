@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingSymbol from "../components/common/LoadingSymbol";
-import { signIn } from "../reducers/user";
+import { signInUser } from "../reducers/user";
 
 const Login = () => {
 	const dispatch = useDispatch();
@@ -22,7 +22,7 @@ const Login = () => {
 				className="max-w-lg mx-auto bg-gray-700 rounded-3xl"
 				onSubmit={(e) => {
 					e.preventDefault();
-					dispatch(signIn(email, pass));
+					dispatch(signInUser(email, pass));
 				}}
 			>
 				<div className="p-20">

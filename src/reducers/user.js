@@ -63,7 +63,7 @@ export const signInUser = (email, pass) => {
 		// As httpOnly cookies are to be used, do not persist any state client side.
 		auth.setPersistence(auth.Auth.Persistence.NONE);
 		// When the user signs in with email and password.
-		auth.signInWithEmailAndPassword("user@example.com", "password")
+		auth.signInWithEmailAndPassword(email, pass)
 			.then((user) => {
 				// Get the user's ID token as it is needed to exchange for a session cookie.
 				return user.getIdToken().then((idToken) => {
