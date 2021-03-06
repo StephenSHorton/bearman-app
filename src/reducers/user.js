@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import firebase, { auth } from "../config/firebase";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 // console.log(
 //     `%c LOGIN_FAILURE: ${err.message} `,
@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 const initialState = {
 	email: null,
 	isAdmin: false,
-	isLogged: false,
+	isLogged: true,
 	isLogging: false,
 };
 
@@ -43,17 +43,55 @@ export const {
 	logout,
 } = user.actions;
 
-const postIdTokenToSessionLogin = (endpoint, idToken, csrfToken) => {
+const postIdTokenToSessionLogin = (endpoint, idToken /* csrfToken */) => {
 	const requestOptions = {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
-			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Origin": "https://bearman-app-eaf20.web.app",
 		},
-		body: JSON.stringify({ idToken, csrfToken }),
+		body: JSON.stringify({ idToken /* csrfToken */ }),
 	};
 	return fetch(
-		`https://us-central1-bearman-app-eaf20.cloudfunctions.net${endpoint}`,
+		`https://us-central1-bearman-app-eaf20.cloudfunctions.net/app${endpoint}`,
+		requestOptions
+	)
+		.then((res) => res.json())
+		.then(
+			(result) => result,
+			(error) => error
+		);
+};
+
+const checkSession = (endpoint) => {
+	const requestOptions = {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "https://bearman-app-eaf20.web.app",
+		},
+	};
+	return fetch(
+		`https://us-central1-bearman-app-eaf20.cloudfunctions.net/app${endpoint}`,
+		requestOptions
+	)
+		.then((res) => res.json())
+		.then(
+			(result) => result,
+			(error) => error
+		);
+};
+
+const removeSessionCookie = (endpoint) => {
+	const requestOptions = {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "https://bearman-app-eaf20.web.app",
+		},
+	};
+	return fetch(
+		`https://us-central1-bearman-app-eaf20.cloudfunctions.net/app${endpoint}`,
 		requestOptions
 	)
 		.then((res) => res.json())
@@ -79,11 +117,11 @@ export const signInUser = (email, pass) => {
 						payload.isAdmin = true;
 					}
 					dispatch(loginSuccess(payload));
-					const csrfToken = Cookies.get("csrfToken");
+					// const csrfToken = Cookies.get("csrfToken");
 					return postIdTokenToSessionLogin(
 						"/sessionLogin",
-						idToken,
-						csrfToken
+						idToken
+						// csrfToken
 					);
 				});
 			})
@@ -106,18 +144,28 @@ export const signInUser = (email, pass) => {
 	};
 };
 
+export const checkIfSession = () => {
+	return (dispatch) => {
+		checkSession("/sessionCheck").then((res) => {
+			console.log(res);
+		});
+	};
+};
+
 export const signOutUser = () => {
 	return (dispatch) => {
 		dispatch(loginRequest());
-		//remove session cookie?
-		auth.signOut()
-			.then(() => {
-				dispatch(logout());
-			})
-			.catch((err) => {
-				console.error(err);
-				dispatch(loginFailure());
-			});
+		removeSessionCookie("/sessionLogout").then(() =>
+			auth
+				.signOut()
+				.then(() => {
+					dispatch(logout());
+				})
+				.catch((err) => {
+					console.error(err);
+					dispatch(loginFailure());
+				})
+		);
 	};
 };
 

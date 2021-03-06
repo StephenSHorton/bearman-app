@@ -650,12 +650,12 @@ button:focus {
 
 .btn-primary {
   --tw-bg-opacity: 1;
-  background-color: rgba(59, 130, 246, var(--tw-bg-opacity));
+  background-color: rgba(37, 99, 235, var(--tw-bg-opacity));
 }
 
 .btn-primary:hover {
   --tw-bg-opacity: 1;
-  background-color: rgba(37, 99, 235, var(--tw-bg-opacity));
+  background-color: rgba(59, 130, 246, var(--tw-bg-opacity));
 }
 
 .btn-primary:focus {
@@ -667,12 +667,12 @@ button:focus {
 
 .btn-danger {
   --tw-bg-opacity: 1;
-  background-color: rgba(239, 68, 68, var(--tw-bg-opacity));
+  background-color: rgba(220, 38, 38, var(--tw-bg-opacity));
 }
 
 .btn-danger:hover {
   --tw-bg-opacity: 1;
-  background-color: rgba(220, 38, 38, var(--tw-bg-opacity));
+  background-color: rgba(239, 68, 68, var(--tw-bg-opacity));
 }
 
 .btn-danger:focus {
@@ -684,12 +684,12 @@ button:focus {
 
 .btn-success {
   --tw-bg-opacity: 1;
-  background-color: rgba(16, 185, 129, var(--tw-bg-opacity));
+  background-color: rgba(5, 150, 105, var(--tw-bg-opacity));
 }
 
 .btn-success:hover {
   --tw-bg-opacity: 1;
-  background-color: rgba(5, 150, 105, var(--tw-bg-opacity));
+  background-color: rgba(16, 185, 129, var(--tw-bg-opacity));
 }
 
 .btn-success:focus {
@@ -701,33 +701,34 @@ button:focus {
 
 .btn-info {
   --tw-bg-opacity: 1;
-  background-color: rgba(79, 70, 229, var(--tw-bg-opacity));
+  background-color: rgba(109, 40, 217, var(--tw-bg-opacity));
 }
 
 .btn-info:hover {
   --tw-bg-opacity: 1;
-  background-color: rgba(67, 56, 202, var(--tw-bg-opacity));
+  background-color: rgba(124, 58, 237, var(--tw-bg-opacity));
 }
 
 .btn-info:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
   --tw-ring-opacity: 1;
-  --tw-ring-color: rgba(129, 140, 248, var(--tw-ring-opacity));
+  --tw-ring-color: rgba(167, 139, 250, var(--tw-ring-opacity));
 }
 
 /* Input */
 
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
-  background-color: transparent;
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="textarea"], select {
+  --tw-bg-opacity: 1;
+  background-color: rgba(75, 85, 99, var(--tw-bg-opacity));
 }
 
-input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="textarea"]:focus, select:focus {
   --tw-bg-opacity: 1;
   background-color: rgba(243, 244, 246, var(--tw-bg-opacity));
 }
 
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="textarea"], select {
   --tw-border-opacity: 1;
   border-color: rgba(37, 99, 235, var(--tw-border-opacity));
   border-bottom-width: 4px;
@@ -29307,7 +29308,8 @@ input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
 input[type="number"]:focus,
-textarea:focus {
+input[type="textarea"]:focus,
+select:focus {
   outline: none;
   color: black;
 }

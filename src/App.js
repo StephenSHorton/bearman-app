@@ -5,6 +5,8 @@ import LoadingSymbol from "./components/common/LoadingSymbol";
 import BottomBar from "./components/navigation/BottomBar";
 import Navbar from "./components/navigation/Navbar";
 import About from "./pages/About";
+import CreateBox from "./pages/admin/CreateBox";
+import Dashboard from "./pages/admin/Dashboard";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -29,14 +31,24 @@ function App() {
 							<Switch>
 								<Route exact path="/" component={Home} />
 								<Route exact path="/about" component={About} />
-								<Route exact path="/Login" component={Login} />
+								<Route exact path="/login" component={Login} />
+								<Route
+									exact
+									path="/dashboard"
+									component={Dashboard}
+								/>
+								<Route
+									exact
+									path="/create"
+									component={CreateBox}
+								/>
 							</Switch>
 						) : (
 							// Standard Routes
 							<Switch>
 								<Route exact path="/" component={Home} />
 								<Route exact path="/about" component={About} />
-								<Route exact path="/Login" component={Login} />
+								<Route exact path="/login" component={Login} />
 							</Switch>
 						)}
 					</div>
