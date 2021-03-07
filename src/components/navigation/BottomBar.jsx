@@ -8,7 +8,7 @@ const BottomBar = () => {
 					<h1>BEARMAN INDUSTRIES</h1>
 				</header>
 				<div>
-					Copyright © 2020 BEARMAN INDUSTRIES - All Rights Reserved.
+					Copyright © 2021 BEARMAN INDUSTRIES - All Rights Reserved.
 				</div>
 				<div className="grid justify-center">
 					<p>4033 S Howick St, Millcreek, UT 84107</p>

@@ -5,6 +5,7 @@ import LoadingSymbol from "./components/common/LoadingSymbol";
 import BottomBar from "./components/navigation/BottomBar";
 import Navbar from "./components/navigation/Navbar";
 import About from "./pages/About";
+import BoxView from "./pages/admin/BoxView";
 import CreateBox from "./pages/admin/CreateBox";
 import Dashboard from "./pages/admin/Dashboard";
 
@@ -42,6 +43,7 @@ function App() {
 									path="/create"
 									component={CreateBox}
 								/>
+								<Route path="/box/:boxID" component={BoxView} />
 							</Switch>
 						) : (
 							// Standard Routes
