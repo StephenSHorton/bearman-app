@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
 	arrowLeft,
 	boxIcon,
@@ -26,6 +26,7 @@ import NewNote from "../../components/forms/NewNote";
 import { getStatus, getStatusColor } from "../../functions/boxFunctions";
 
 const BoxView = (props) => {
+	const HISTORY = useHistory();
 	const boxID = props.match.params.boxID;
 	const [box, setBox] = React.useState();
 	const [selectedEmployee, setSelectedEmployee] = React.useState();
@@ -112,6 +113,7 @@ const BoxView = (props) => {
 				alert(
 					"Error: status change could not be completed. (status of op)"
 				);
+
 				return;
 		}
 		operations[indexOfOP] = newOP;
@@ -351,8 +353,11 @@ const BoxView = (props) => {
 		if (window.confirm("Are you sure you want to delete this box?")) {
 			const response = window.prompt("Password");
 			if (response === "1234") {
+				HISTORY.push("/dashboard");
 				deleteBox(box.id)
-					.then(() => alert("Successfully deleted box."))
+					.then(() => {
+						alert("Successfully deleted box.");
+					})
 					.catch((err) => {
 						alert("There was a problem deleting this box.");
 						console.log(err);

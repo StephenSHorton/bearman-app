@@ -14,7 +14,6 @@ import { getStatus, getStatusColor } from "../../functions/boxFunctions";
 const InactiveBoxList = ({ sortParams }) => {
 	//TODO sort boxes by columns
 	const [boxes, setBoxes] = React.useState();
-	const [lastVisible, setLastVisible] = React.useState();
 
 	React.useEffect(() => {
 		const [attribute, value] = sortParams;
@@ -25,9 +24,6 @@ const InactiveBoxList = ({ sortParams }) => {
 					data.push({ ...doc.data(), id: doc.id })
 				);
 				setBoxes(data);
-				setLastVisible(
-					querySnapshot.docs[querySnapshot.docs.length - 1]
-				);
 			})
 			.catch((err) => console.log(err));
 	}, [sortParams]);
@@ -54,7 +50,11 @@ const InactiveBoxList = ({ sortParams }) => {
 	return (
 		<div>
 			<p className="p-0 text-sm font-light">
-				Only the most recent boxes are shown (up to 50)
+				Boxes with "RETIRED" status signify a manually retired box whose
+				operations were not all marked as "COMPLETE".
+			</p>
+			<p className="p-0 text-sm font-light">
+				Only the most recent boxes are shown (up to 100)
 			</p>
 			<table className="w-full">
 				<thead>
@@ -82,11 +82,15 @@ const InactiveBoxList = ({ sortParams }) => {
 								) : null}
 								<td>{box.box_number}</td>
 								<td
-									className={`bg-${getStatusColor(
-										box.status
-									)}-500 font-semibold`}
+									className={`bg-${
+										box.status === 3
+											? "gray"
+											: getStatusColor(box.status)
+									}-500 font-semibold`}
 								>
-									{getStatus(box.status)}
+									{box.status === 3
+										? "RETIRED"
+										: getStatus(box.status)}
 								</td>
 								<td className="p-4">
 									<Link to={`/box/${box.id}`}>

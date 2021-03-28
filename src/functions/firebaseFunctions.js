@@ -23,7 +23,7 @@ export const getRetiredBoxesByAttribute = (attribute, value) =>
 		.where("is_active", "==", false)
 		.where(attribute, "==", value)
 		.orderBy("created_at")
-		.limit(50)
+		.limit(100)
 		.get();
 
 //Operations
@@ -38,3 +38,30 @@ export const getOperations = (partType, model) =>
 //Employees
 export const createEmployee = (doc) => db.collection("Employees").add(doc);
 export const getEmployees = () => db.collection("Employees").get();
+
+//Testing
+// export const addDocumentsToDatabase = (docs) => {
+// 	docs.forEach((doc) => {
+// 		let newDoc = doc;
+// 		newDoc.operations.forEach((op) => {
+// 			op.model = newDoc.model;
+// 			op.part_type = newDoc.part_type;
+// 			op.interruptions = [
+// 				{
+// 					interrupted_at: new Date().getTime(),
+// 					interrupted_by: "",
+// 					reason: "OP was left interrupted",
+// 				},
+// 			];
+// 			return;
+// 		});
+// 		if (newDoc.retiredAt) {
+// 			newDoc.created_at = new Date(newDoc.retiredAt);
+// 			delete newDoc.retiredAt;
+// 		} else if (newDoc.created_at) {
+// 			newDoc.created_at = new Date(newDoc.created_at);
+// 		}
+// 		newDoc.history = [];
+// 		return db.collection("Boxes").add(newDoc);
+// 	});
+// };

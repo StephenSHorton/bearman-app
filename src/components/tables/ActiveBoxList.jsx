@@ -52,6 +52,10 @@ const ActiveBoxList = ({ sortParams }) => {
 
 	return (
 		<div>
+			<p className="p-0 text-sm font-light">
+				Boxes with "INTERRUPTED" status are either manually interrupted,
+				or sitting without an "INPROGRESS" operation.
+			</p>
 			<table className="w-full">
 				<thead>
 					<tr className="bg-transparent">
