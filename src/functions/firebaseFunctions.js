@@ -7,12 +7,14 @@ export const streamBox = (id, observer) =>
 	db.collection("Boxes").doc(id).onSnapshot(observer);
 export const updateBox = (id, updatedDoc) =>
 	db.collection("Boxes").doc(id).set(updatedDoc, { merge: true });
+export const deleteBox = (id) => db.collection("Boxes").doc(id).delete();
 
 export const streamActiveBoxesByAttribute = (attribute, value, observer) =>
 	db
 		.collection("Boxes")
 		.where("is_active", "==", true)
 		.where(attribute, "==", value)
+		.orderBy("box_number")
 		.onSnapshot(observer);
 
 export const getRetiredBoxesByAttribute = (attribute, value) =>
@@ -20,6 +22,8 @@ export const getRetiredBoxesByAttribute = (attribute, value) =>
 		.collection("Boxes")
 		.where("is_active", "==", false)
 		.where(attribute, "==", value)
+		.orderBy("created_at")
+		.limit(50)
 		.get();
 
 //Operations
@@ -28,6 +32,7 @@ export const getOperations = (partType, model) =>
 		.collection("Operations")
 		.where("part_type", "==", partType)
 		.where("model", "==", model)
+		.orderBy("list_order")
 		.get();
 
 //Employees

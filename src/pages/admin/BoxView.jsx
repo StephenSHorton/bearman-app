@@ -15,7 +15,11 @@ import {
 	trash,
 } from "../../components/common/icons";
 import QRCodeGenerator from "../../components/common/QRCodeGenerator";
-import { streamBox, updateBox } from "../../functions/firebaseFunctions";
+import {
+	deleteBox,
+	streamBox,
+	updateBox,
+} from "../../functions/firebaseFunctions";
 import SelectEmployee from "../../components/common/SelectEmployee";
 import LoadingSymbol from "../../components/common/LoadingSymbol";
 import NewNote from "../../components/forms/NewNote";
@@ -229,9 +233,9 @@ const BoxView = (props) => {
 							<p className="mr-1">{getIcon(boxIcon2, 12)}</p>{" "}
 							<p>
 								QUANTITY:{" "}
-								<span className="text-blue-300">
+								<inpu className="text-blue-300">
 									{box.quantity}
-								</span>
+								</inpu>
 							</p>
 						</div>
 						<div className="flex items-center text-xl font-bold">
@@ -343,6 +347,22 @@ const BoxView = (props) => {
 		);
 	};
 
+	const handleDelete = () => {
+		if (window.confirm("Are you sure you want to delete this box?")) {
+			const response = window.prompt("Password");
+			if (response === "1234") {
+				deleteBox(box.id)
+					.then(() => alert("Successfully deleted box."))
+					.catch((err) => {
+						alert("There was a problem deleting this box.");
+						console.log(err);
+					});
+			} else {
+				alert("Invalid Password.");
+			}
+		}
+	};
+
 	return (
 		<div>
 			<div className="flex p-4 space-x-4 justify-end">
@@ -369,7 +389,10 @@ const BoxView = (props) => {
 					</button>
 				</Link>
 				<Link>
-					<button className="btn-danger flex items-center">
+					<button
+						className="btn-danger flex items-center"
+						onClick={handleDelete}
+					>
 						Delete <p className="ml-1">{getIcon(trash, 6)}</p>
 					</button>
 				</Link>

@@ -2,6 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
+const { firestore } = require("firebase-admin");
 // const firebase = admin.initializeApp(); //next line is replacement (don't need firebase atm)
 admin.initializeApp();
 // const db = admin.firestore();
@@ -110,7 +111,7 @@ exports.onBoxChange = functions.firestore
 		let COMPLETED = true;
 		let INTERRUPTED = false;
 		updatedDoc.operations.forEach((op) => {
-			if (op.status !== 1) {
+			if (op.status !== 1 && op.status !== undefined) {
 				INPROGRESS = true;
 			}
 			if (op.status === 3) {
@@ -121,26 +122,46 @@ exports.onBoxChange = functions.firestore
 			}
 		});
 
-		if (COMPLETED) {
-			return change.after.ref.set({
-				status: 4,
-				is_active: false,
-			});
-		}
 		if (INTERRUPTED) {
-			return change.after.ref.set({
-				status: 4,
-				is_active: true,
-			});
+			if (updatedDoc.status !== 3) {
+				return change.after.ref.set(
+					{
+						status: 3,
+						is_active: true,
+					},
+					{ merge: true }
+				);
+			}
+		} else if (COMPLETED) {
+			if (updatedDoc.is_active !== false) {
+				return change.after.ref.set(
+					{
+						status: 4,
+						is_active: false,
+						completed_at: firestore.FieldValue.serverTimestamp(),
+					},
+					{ merge: true }
+				);
+			}
+		} else if (INPROGRESS) {
+			if (updatedDoc.status !== 2) {
+				return change.after.ref.set(
+					{
+						status: 2,
+						is_active: true,
+					},
+					{ merge: true }
+				);
+			}
+		} else {
+			if (updatedDoc.status !== 1) {
+				return change.after.ref.set(
+					{
+						status: 1,
+						is_active: true,
+					},
+					{ merge: true }
+				);
+			}
 		}
-		if (INPROGRESS) {
-			return change.after.ref.set({
-				status: 4,
-				is_active: true,
-			});
-		}
-		return change.after.ref.set({
-			status: 1,
-			is_active: true,
-		});
 	});
