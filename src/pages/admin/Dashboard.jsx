@@ -37,7 +37,7 @@ const Dashboard = () => {
 			<div className="grid grid-cols-2 space-x-2">
 				<div>
 					<h1
-						className={`text-2xl font-bold text-center mb-6 bg-${
+						className={`text-2xl font-bold text-center mb-2 bg-${
 							showActiveBoxes ? "yellow-600" : "purple-700"
 						}`}
 					>
@@ -53,7 +53,7 @@ const Dashboard = () => {
 				</div>
 				<div>
 					<h1
-						className={`text-2xl font-bold text-center mb-6 bg-${
+						className={`text-2xl font-bold text-center mb-2 bg-${
 							showActiveBoxes ? "yellow-600" : "purple-700"
 						}`}
 					>

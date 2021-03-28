@@ -54,6 +54,10 @@ const ActiveBoxList = ({ sortParams }) => {
 
 	return (
 		<div>
+			<p className="p-0 text-sm font-light">
+				Boxes can no longer be retired manually, they will become
+				"Inactive" when all of their operations are completed.
+			</p>
 			{boxes ? (
 				<div>
 					<BoxTotals boxes={boxes} />
@@ -61,10 +65,6 @@ const ActiveBoxList = ({ sortParams }) => {
 					<PartTotals boxes={boxes} model={"CL"} />
 				</div>
 			) : null}
-			<p className="p-0 text-sm font-light">
-				Boxes can no longer be retired manually, they will become
-				"Inactive" when all of their operations are completed.
-			</p>
 			<table className="w-full">
 				<thead>
 					<tr className="bg-transparent">
