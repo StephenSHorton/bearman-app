@@ -10,6 +10,8 @@ import {
 } from "../common/icons";
 import { Link } from "react-router-dom";
 import { getStatus, getStatusColor } from "../../functions/boxFunctions";
+import BoxTotals from "./BoxTotals";
+import PartTotals from "./PartTotals";
 
 const ActiveBoxList = ({ sortParams }) => {
 	//TODO sort boxes by columns
@@ -52,9 +54,16 @@ const ActiveBoxList = ({ sortParams }) => {
 
 	return (
 		<div>
+			{boxes ? (
+				<div>
+					<BoxTotals boxes={boxes} />
+					<PartTotals boxes={boxes} model={"BB"} />
+					<PartTotals boxes={boxes} model={"CL"} />
+				</div>
+			) : null}
 			<p className="p-0 text-sm font-light">
-				Boxes with "INTERRUPTED" status are either manually interrupted,
-				or sitting without an "INPROGRESS" operation.
+				Boxes can no longer be retired manually, they will become
+				"Inactive" when all of their operations are completed.
 			</p>
 			<table className="w-full">
 				<thead>

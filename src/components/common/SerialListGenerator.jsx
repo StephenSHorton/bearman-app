@@ -8,7 +8,7 @@ const SerialListGenerator = ({ serialMin, serialMax, model }) => {
 				jsxArray.push(
 					<div className="h-12 overflow-hidden mx-4 my-3">
 						<img
-							style={{ transform: "translateY(-65px)" }}
+							style={{ transform: "translateY(-70px)" }}
 							key={i}
 							alt="Barcoded value"
 							src={`http://bwipjs-api.metafloor.com/?bcid=code128&scale=1&text=${i}&includetext`}
