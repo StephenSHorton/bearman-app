@@ -29,3 +29,7 @@ export const getOperations = (partType, model) =>
 		.where("part_type", "==", partType)
 		.where("model", "==", model)
 		.get();
+
+//Employees
+export const createEmployee = (doc) => db.collection("Employees").add(doc);
+export const getEmployees = () => db.collection("Employees").get();

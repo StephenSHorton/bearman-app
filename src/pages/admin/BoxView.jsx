@@ -5,7 +5,6 @@ import {
 	boxIcon,
 	boxIcon2,
 	clock,
-	cog,
 	getCog,
 	getIcon,
 	history,
@@ -16,10 +15,11 @@ import {
 	trash,
 } from "../../components/common/icons";
 import QRCodeGenerator from "../../components/common/QRCodeGenerator";
-import { streamBox } from "../../functions/firebaseFunctions";
+import { streamBox, updateBox } from "../../functions/firebaseFunctions";
 import SelectEmployee from "../../components/common/SelectEmployee";
 import LoadingSymbol from "../../components/common/LoadingSymbol";
 import NewNote from "../../components/forms/NewNote";
+import { getStatus, getStatusColor } from "../../functions/boxFunctions";
 
 const BoxView = (props) => {
 	const boxID = props.match.params.boxID;
@@ -34,6 +34,174 @@ const BoxView = (props) => {
 		});
 		return unsubscribe;
 	}, [boxID]);
+
+	const handleStatusChange = (newStatus, opListOrder) => {
+		if (!selectedEmployee) {
+			alert(
+				"Error: An employee must be selected in order to make changes."
+			);
+			return;
+		}
+		let reason;
+		if (newStatus === 3) {
+			reason = window.prompt(
+				"Please give a reason for interrupting this operation (i.e. 'Break/Lunch'; 'Problem with machine'; etc...)"
+			);
+			if (!reason) {
+				return;
+			}
+		}
+		const indexOfOP = opListOrder - 1;
+		if (indexOfOP === -1) {
+			alert("Error: status change could not be completed. (indexOf op)");
+			return;
+		}
+		const operations = box.operations;
+		const oldOP = operations[indexOfOP];
+		let newOP = {
+			...oldOP,
+			status: newStatus,
+			updated_at: new Date().getTime(),
+			updated_by: selectedEmployee.name,
+		};
+
+		switch (newStatus) {
+			//handle interruptions differently, everything else is default
+			case 1:
+				delete newOP.updated_at;
+				delete newOP.updated_by;
+				delete newOP.status;
+				delete newOP.interruptions;
+				break;
+			case 2:
+				if (oldOP.status === 1) {
+					newOP.started_at = new Date().getTime();
+				} else if (newOP.hasOwnProperty("interruptions")) {
+					newOP.interruptions[
+						newOP.interruptions.length - 1
+					].resumed_at = new Date().getTime();
+					newOP.interruptions[
+						newOP.interruptions.length - 1
+					].resumed_by = selectedEmployee.name;
+				}
+				break;
+			case 3:
+				if (!newOP.hasOwnProperty("interruptions")) {
+					newOP.interruptions = [];
+					newOP.interruptions.push({
+						interrupted_at: new Date().getTime(),
+						interrupted_by: selectedEmployee.name,
+						reason,
+					});
+				} else {
+					newOP.interruptions.push({
+						interrupted_at: new Date().getTime(),
+						interrupted_by: selectedEmployee.name,
+						reason,
+					});
+				}
+				break;
+			case 4:
+				newOP.completed_at = new Date().getTime();
+				break;
+			default:
+				alert(
+					"Error: status change could not be completed. (status of op)"
+				);
+				return;
+		}
+		operations[indexOfOP] = newOP;
+		console.log(oldOP.status, newStatus);
+		let updatedDoc = {
+			...box,
+			operations,
+			history: [
+				...box.history,
+				{
+					description: `Operation #${opListOrder} status changed`,
+					old_value: getStatus(oldOP.status),
+					new_value: getStatus(newStatus),
+					updated_at: new Date().getTime(),
+					updated_by: selectedEmployee.name,
+				},
+			],
+		};
+		if (reason) {
+			updatedDoc.history = [
+				...box.history,
+				{
+					description: `Operation #${opListOrder} status changed`,
+					old_value: getStatus(oldOP.status),
+					new_value: getStatus(newStatus),
+					updated_at: new Date().getTime(),
+					updated_by: selectedEmployee.name,
+					extra_details: reason,
+				},
+			];
+		}
+		updateBox(box.id, updatedDoc).catch((err) => console.log(err));
+	};
+
+	const getOperationButtons = (opStatus, opListOrder) => {
+		switch (opStatus) {
+			case 2:
+				return (
+					<div className="flex space-x-10">
+						<button
+							className="btn-warning px-10 py-8"
+							onClick={() => handleStatusChange(3, opListOrder)}
+						>
+							Interrupt
+						</button>
+						<button
+							className="btn-success px-10 py-8"
+							onClick={() => handleStatusChange(4, opListOrder)}
+						>
+							Complete
+						</button>
+					</div>
+				);
+			case 3:
+				return (
+					<div className="flex space-x-10">
+						<button
+							className="btn-primary px-10 py-8"
+							onClick={() => handleStatusChange(2, opListOrder)}
+						>
+							Resume
+						</button>
+					</div>
+				);
+			case 4:
+				return (
+					<div className="flex space-x-10">
+						<button
+							className="btn-danger px-10 py-8"
+							onClick={() => handleStatusChange(1, opListOrder)}
+						>
+							Undo
+						</button>
+					</div>
+				);
+			default:
+				return (
+					<div className="flex space-x-10">
+						<button
+							className="btn-primary px-10 py-8"
+							onClick={() => handleStatusChange(2, opListOrder)}
+						>
+							Start
+						</button>
+						<button
+							className="btn-success px-10 py-8"
+							onClick={() => handleStatusChange(4, opListOrder)}
+						>
+							Complete
+						</button>
+					</div>
+				);
+		}
+	};
 
 	const BoxInformation = () => {
 		return (
@@ -52,25 +220,63 @@ const BoxView = (props) => {
 					<div className="grid grid-cols-2 items-center pl-2 border-4 border-r-0 bg-gray-700 shadow-inner-xl border-gray-500">
 						<div className="flex items-center text-xl font-bold">
 							<p className="mr-1">{getIcon(qrcode, 12)}</p>{" "}
-							{`ID: ${box.id}`}
+							<p>
+								ID:{" "}
+								<span className="text-blue-300">{box.id}</span>
+							</p>
 						</div>
 						<div className="flex items-center text-xl font-bold">
 							<p className="mr-1">{getIcon(boxIcon2, 12)}</p>{" "}
-							{`QUANTITY: ${box.quantity}`}
+							<p>
+								QUANTITY:{" "}
+								<span className="text-blue-300">
+									{box.quantity}
+								</span>
+							</p>
 						</div>
 						<div className="flex items-center text-xl font-bold">
 							<p className="mr-1">{getIcon(boxIcon, 12)}</p>{" "}
-							{`BOX #: ${box.box_number}`}
+							<p>
+								BOX #:{" "}
+								<span className="text-blue-300">
+									{box.box_number}
+								</span>
+							</p>
 						</div>
 						<div className="flex items-center text-xl font-bold">
 							<p className="mr-1">{getIcon(person, 12)}</p>{" "}
-							{`LAST MODIFIED BY: ${box.updated_by || ""}`}
+							<p>
+								LAST MODIFIED BY:{" "}
+								<span className="text-blue-300">
+									{box.updated_by || ""}
+								</span>
+							</p>
 						</div>
 						<div className="flex items-center text-xl font-bold">
 							<p className="mr-1">{getCog(12)}</p>{" "}
-							{`MODEL: ${box.part_type.toUpperCase()} ${
-								box.model
-							}`}
+							<p>
+								MODEL:{" "}
+								<span className="text-blue-300">
+									{`${box.part_type.toUpperCase()} ${
+										box.model
+									}`}
+								</span>
+							</p>
+						</div>
+						<div className="flex items-center text-xl font-bold">
+							<p className="mr-1">{getIcon(clock, 12)}</p>{" "}
+							<p>
+								CREATED AT:{" "}
+								<span className="text-blue-300">
+									{box.created_at
+										.toDate()
+										.toLocaleDateString("en-US", {
+											hour: "numeric",
+											minute: "numeric",
+											timeZoneName: "short",
+										})}
+								</span>
+							</p>
 						</div>
 						{box.part_type === "Frames" ? (
 							<div className="flex items-center text-xl font-bold">
@@ -83,16 +289,6 @@ const BoxView = (props) => {
 								</p>
 							</div>
 						) : null}
-						<div className="flex items-center text-xl font-bold">
-							<p className="mr-1">{getIcon(clock, 12)}</p>{" "}
-							{`CREATED AT: ${box.created_at
-								.toDate()
-								.toLocaleDateString("en-US", {
-									hour: "numeric",
-									minute: "numeric",
-									timeZoneName: "short",
-								})}`}
-						</div>
 					</div>
 					<div className="border-4 bg-gray-700 shadow-inner-xl border-gray-500 w-1/3">
 						<NewNote
@@ -101,7 +297,48 @@ const BoxView = (props) => {
 						/>
 					</div>
 				</div>
-				<div>{/* Operations */}</div>
+				<div>
+					{box.operations.map((op, index) => (
+						<div
+							key={index}
+							className="bg-gray-700 m-10 shadow-2xl rounded-lg p-10"
+						>
+							<div></div>
+							<div
+								className={`bg-${getStatusColor(
+									op.status
+								)}-600 font-extrabold p-1 rounded-md text-xl`}
+							>
+								OPERATION #{index + 1}
+							</div>
+							<div className="text-3xl">{op.description}</div>
+							<div className="flex justify-between">
+								<div
+									className={`text-${getStatusColor(
+										op.status
+									)}-600`}
+								>
+									{getStatus(op.status)}
+									{op.status === 3
+										? ` - ${
+												op.interruptions[
+													op.interruptions.length - 1
+												].reason
+										  } - ${
+												op.interruptions[
+													op.interruptions.length - 1
+												].interrupted_by
+										  } `
+										: null}
+								</div>
+								<div>
+									{/* TODO show start time and completed time and sum to show total time */}
+								</div>
+								{getOperationButtons(op.status, op.list_order)}
+							</div>
+						</div>
+					))}
+				</div>
 			</div>
 		);
 	};

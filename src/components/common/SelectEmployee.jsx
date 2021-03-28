@@ -1,19 +1,21 @@
 import React from "react";
+import { getEmployees } from "../../functions/firebaseFunctions";
 import { getIcon, person } from "./icons";
-
-const employees = [
-	{ name: "Stephen Horton" },
-	{ name: "Stephen Horton" },
-	{ name: "Stephen Horton" },
-	{ name: "Stephen Horton" },
-	{ name: "Stephen Horton" },
-	{ name: "Stephen Horton" },
-	{ name: "Stephen Horton" },
-];
 
 const SelectEmployee = ({ selectedEmployee, setSelectedEmployee }) => {
 	const [isOpenEmployeeList, setIsOpenEmployeeList] = React.useState(false);
 	const employeeListWrapperRef = React.useRef(null);
+	const [employees, setEmployees] = React.useState([]);
+
+	React.useEffect(() => {
+		getEmployees().then((querySnapshot) => {
+			const data = [];
+			querySnapshot.forEach((doc) =>
+				data.push({ ...doc.data(), id: doc.id })
+			);
+			setEmployees(data);
+		});
+	}, []);
 
 	//This listener will close the employeelist modal when click outside (Can handle other refs)
 	React.useEffect(() => {

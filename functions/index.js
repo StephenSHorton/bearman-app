@@ -101,3 +101,46 @@ exports.addAdminRole = functions.https.onCall((data, context) => {
 			return err;
 		});
 });
+
+exports.onBoxChange = functions.firestore
+	.document("Boxes/{docId}")
+	.onUpdate((change, context) => {
+		const updatedDoc = change.after.data();
+		let INPROGRESS = false;
+		let COMPLETED = true;
+		let INTERRUPTED = false;
+		updatedDoc.operations.forEach((op) => {
+			if (op.status !== 1) {
+				INPROGRESS = true;
+			}
+			if (op.status === 3) {
+				INTERRUPTED = true;
+			}
+			if (op.status !== 4) {
+				COMPLETED = false;
+			}
+		});
+
+		if (COMPLETED) {
+			return change.after.ref.set({
+				status: 4,
+				is_active: false,
+			});
+		}
+		if (INTERRUPTED) {
+			return change.after.ref.set({
+				status: 4,
+				is_active: true,
+			});
+		}
+		if (INPROGRESS) {
+			return change.after.ref.set({
+				status: 4,
+				is_active: true,
+			});
+		}
+		return change.after.ref.set({
+			status: 1,
+			is_active: true,
+		});
+	});

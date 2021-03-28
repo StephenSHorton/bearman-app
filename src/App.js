@@ -9,6 +9,7 @@ import BoxHistory from "./pages/admin/BoxHistory";
 import BoxPrint from "./pages/admin/BoxPrint";
 import BoxView from "./pages/admin/BoxView";
 import CreateBox from "./pages/admin/CreateBox";
+import CreateEmployee from "./pages/admin/CreateEmployee";
 import Dashboard from "./pages/admin/Dashboard";
 
 import Home from "./pages/Home";
@@ -44,6 +45,11 @@ function App() {
 									exact
 									path="/create"
 									component={CreateBox}
+								/>
+								<Route
+									exact
+									path="/create_employee"
+									component={CreateEmployee}
 								/>
 								<Route path="/box/:boxID" component={BoxView} />
 								<Route

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { boxIcon, getIcon } from "../../components/common/icons";
+import { boxIcon, getIcon, person } from "../../components/common/icons";
 import ActiveBoxList from "../../components/tables/ActiveBoxList";
 
 const Dashboard = () => {
@@ -10,11 +10,17 @@ const Dashboard = () => {
 				<h1>Dashboard</h1>
 			</header>
 			{/* TODO Add graph view of boxes */}
-			<div className="flex justify-end mx-10 my-5">
+			<div className="flex justify-end my-5 space-x-4">
 				{/* Navigation */}
+				<Link to="/create_employee">
+					<button className="btn-primary flex items-center">
+						<p className="mr-2">Add Employees</p>
+						{getIcon(person, 8)}
+					</button>
+				</Link>
 				<Link to="/create">
 					<button className="btn-primary flex items-center">
-						<p className="mr-2">Create New</p>
+						<p className="mr-2">Create Box</p>
 						{getIcon(boxIcon, 8)}
 					</button>
 				</Link>

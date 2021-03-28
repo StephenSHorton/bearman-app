@@ -24,6 +24,21 @@ const BoxHistory = (props) => {
 		return unsubscribe;
 	}, [boxID]);
 
+	const getBGColor = (new_value) => {
+		switch (new_value) {
+			case "INTERRUPTED":
+				return "yellow-600";
+			case "INPROGRESS":
+				return "blue-600";
+			case "NOTSTARTED":
+				return "red-600";
+			case "COMPLETED":
+				return "green-600";
+			default:
+				return "gray-600";
+		}
+	};
+
 	return box ? (
 		<div>
 			<header>
@@ -66,29 +81,42 @@ const BoxHistory = (props) => {
 					.slice(0)
 					.reverse()
 					.map((history) => (
-						<div className="flex flex-col items-center border-4 border-gray-600 bg-gray-700 m-10">
-							<p className="text-4xl p-4 bg-gray-600 m-2 rounded-md">
-								{history.description}
-							</p>
-							<p>
-								Logged at:{" "}
-								<span className="text-yellow-400">
-									{new Date(
-										history.updated_at
-									).toLocaleDateString("en-US", {
-										hour: "numeric",
-										minute: "numeric",
-										timeZoneName: "short",
-									})}
-								</span>
-							</p>
-							<p>
-								Change made by:{" "}
-								<span className="text-green-500">
-									{history.updated_by}
-								</span>
-							</p>
-							<div className="grid grid-cols-2 w-full max-w-6xl">
+						<div
+							className={`border-4 border-gray-600 bg-gray-700 m-10`}
+						>
+							<div className="flex flex-col items-center">
+								<p
+									className={`text-4xl p-4 bg-${getBGColor(
+										history.new_value
+									)} m-2 rounded-md`}
+								>
+									{history.description}
+								</p>
+								<p>
+									Logged at:{" "}
+									<span className="text-yellow-400">
+										{new Date(
+											history.updated_at
+										).toLocaleDateString("en-US", {
+											hour: "numeric",
+											minute: "numeric",
+											timeZoneName: "short",
+										})}
+									</span>
+								</p>
+								<p>
+									Change made by:{" "}
+									<span className="text-green-500">
+										{history.updated_by}
+									</span>
+								</p>
+							</div>
+							{history.extra_details ? (
+								<p className="text-center p-4 bg-gray-600">
+									{history.extra_details}
+								</p>
+							) : null}
+							<div className="flex justify-around">
 								<div className="m-2">
 									<p className="text-red-500">Old value:</p>
 									<p>{history.old_value}</p>
