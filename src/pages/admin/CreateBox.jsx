@@ -1,6 +1,11 @@
 import React from "react";
 import { useHistory } from "react-router";
-import { chevronRight } from "../../components/common/icons";
+import { Link } from "react-router-dom";
+import {
+	arrowLeft,
+	chevronRight,
+	getIcon,
+} from "../../components/common/icons";
 import { createBox, getOperations } from "../../functions/firebaseFunctions";
 
 const sortByListOrder = (a, b) => {
@@ -82,9 +87,10 @@ const CreateBox = () => {
 			quantity: Number(quantity),
 			operations,
 			note,
-			isActive: true,
-			createdAt: new Date(),
+			is_active: true,
+			created_at: new Date(),
 			status: 1,
+			history: [],
 		};
 		if (part_type === "Frames") {
 			newDoc = {
@@ -114,13 +120,23 @@ const CreateBox = () => {
 				<h1>Create Box</h1>
 			</header>
 			<div className="grid">
-				<button
-					className="btn-danger justify-self-end mb-2"
-					type="button"
-					onClick={() => clearForm()}
-				>
-					Clear
-				</button>
+				<div className="flex items-center justify-self-end m-4 space-x-4">
+					<Link to={`/dashboard`}>
+						<button className="btn-primary">
+							<div className="flex items-center">
+								<p className="mr-1">{getIcon(arrowLeft, 4)}</p>{" "}
+								Back
+							</div>
+						</button>
+					</Link>
+					<button
+						className="btn-danger justify-self-end"
+						type="button"
+						onClick={() => clearForm()}
+					>
+						Clear
+					</button>
+				</div>
 				<form
 					className="grid bg-gray-700 shadow-2xl rounded-xl"
 					onSubmit={handleSubmit}
@@ -258,9 +274,8 @@ const CreateBox = () => {
 					</fieldset>
 					<fieldset className="flex flex-col m-5 mx-10">
 						<label>Notes</label>
-						<input
+						<textarea
 							className="pl-2"
-							type="textarea"
 							autoComplete="off"
 							onChange={(e) => setNote(e.target.value)}
 							value={note}

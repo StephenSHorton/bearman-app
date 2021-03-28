@@ -38,6 +38,9 @@
 	.btn-success {
 		@apply bg-green-600 hover:bg-green-500 focus:ring-green-400;
 	}
+	.btn-warning {
+		@apply bg-yellow-600 hover:bg-yellow-500 focus:ring-yellow-400;
+	}
 	.btn-info {
 		@apply bg-purple-700 hover:bg-purple-600 focus:ring-purple-400;
 	}
@@ -47,7 +50,7 @@
 	input[type="email"],
 	input[type="password"],
 	input[type="number"],
-	input[type="textarea"],
+	textarea,
 	select {
 		@apply border-b-4 border-blue-600 bg-gray-600 focus:bg-gray-100;
 	}
@@ -69,8 +72,14 @@ input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
 input[type="number"]:focus,
-input[type="textarea"]:focus,
+textarea:focus,
 select:focus {
 	outline: none;
 	color: black;
+}
+
+.shadow-inner-xl {
+	--tw-shadow: inset 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+	box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+		var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }

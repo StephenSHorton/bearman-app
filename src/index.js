@@ -5,12 +5,15 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import store from "./store";
+import PrintProvider from "react-easy-print";
 
 ReactDOM.render(
 	<React.StrictMode>
-		<Provider store={store}>
-			<App />
-		</Provider>
+		<PrintProvider>
+			<Provider store={store}>
+				<App />
+			</Provider>
+		</PrintProvider>
 	</React.StrictMode>,
 	document.getElementById("root")
 );

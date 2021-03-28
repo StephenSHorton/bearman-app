@@ -1,7 +1,13 @@
 import React from "react";
 import { streamActiveBoxesByAttribute } from "../../functions/firebaseFunctions";
 import LoadingSymbol from "../common/LoadingSymbol";
-import { boxIcon, arrowRight, chevronDown, chevronUp } from "../common/icons";
+import {
+	boxIcon,
+	arrowRight,
+	chevronDown,
+	chevronUp,
+	getIcon,
+} from "../common/icons";
 import { Link } from "react-router-dom";
 import { getStatus, getStatusColor } from "../../functions/boxFunctions";
 
@@ -33,7 +39,7 @@ const ActiveBoxList = ({ sortParams }) => {
 					className="p-2 rounded-full"
 					onClick={() => setIsOpen(!isOpen)}
 				>
-					{isOpen ? chevronUp : chevronDown}
+					{isOpen ? getIcon(chevronUp, 6) : getIcon(chevronDown, 6)}
 				</button>
 				<div className={`${isOpen ? "" : "hidden"} absolute z-20`}>
 					<div className="relative p-4 top-2 right-10 bg-white rounded-md text-black">
@@ -45,56 +51,57 @@ const ActiveBoxList = ({ sortParams }) => {
 	};
 
 	return (
-		<table className="mx-4">
-			<thead>
-				<tr className="bg-transparent">
-					<th className="px-2"></th>
-					<th className="px-2">ID</th>
-					<th className="px-2">PART</th>
-					<th className="px-2">QUANTITY</th>
-					{sortParams[1] === "Frames" ? (
-						<th className="px-2">SERIAL</th>
-					) : null}
-					<th className="px-2">BOX NUMBER</th>
-					<th className="px-2">STATUS</th>
-					<th className="px-2"></th>
-				</tr>
-			</thead>
-			<tbody>
+		<div>
+			<table className="w-full">
+				<thead>
+					<tr className="bg-transparent">
+						<th></th>
+						<th>ID</th>
+						<th>MODEL</th>
+						<th>QUANTITY</th>
+						{sortParams[1] === "Frames" ? <th>SERIAL</th> : null}
+						<th>BOX NUMBER</th>
+						<th>STATUS</th>
+						<th></th>
+					</tr>
+				</thead>
 				{boxes ? (
-					boxes.map((box, index) => (
-						<tr key={index} className="text-center shadow-xl">
-							<td className="p-4">{boxIcon}</td>
-							<IDRow box={box} />
-							<td>{`${box.part_type} ${box.model}`}</td>
-							<td>{box.quantity}</td>
-							{box.part_type === "Frames" ? (
-								<td>{`${box.serial_range_min} - ${box.serial_range_max}`}</td>
-							) : null}
-							<td>{box.box_number}</td>
-							<td
-								className={`bg-${getStatusColor(
-									box.status
-								)}-500 font-semibold`}
-							>
-								{getStatus(box.status)}
-							</td>
-							<td className="p-4">
-								<Link to={`/box/${box.id}`}>
-									<button className="btn-primary rounded-full p-2">
-										{arrowRight}
-									</button>
-								</Link>
-							</td>
-						</tr>
-					))
-				) : (
-					<div className="absolute z-20">
-						<LoadingSymbol />
-					</div>
-				)}
-			</tbody>
-		</table>
+					<tbody>
+						{boxes.map((box, index) => (
+							<tr key={index} className="text-center shadow-xl">
+								<td className="p-4">{getIcon(boxIcon, 6)}</td>
+								<IDRow box={box} />
+								<td>{`${box.model}`}</td>
+								<td>{box.quantity}</td>
+								{box.part_type === "Frames" ? (
+									<td>{`${box.serial_range_min} - ${box.serial_range_max}`}</td>
+								) : null}
+								<td>{box.box_number}</td>
+								<td
+									className={`bg-${getStatusColor(
+										box.status
+									)}-500 font-semibold`}
+								>
+									{getStatus(box.status)}
+								</td>
+								<td className="p-4">
+									<Link to={`/box/${box.id}`}>
+										<button className="btn-primary rounded-full p-2">
+											{getIcon(arrowRight, 6)}
+										</button>
+									</Link>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				) : null}
+			</table>
+			{boxes ? null : (
+				<div className="absolute z-20">
+					<LoadingSymbol />
+				</div>
+			)}
+		</div>
 	);
 };
 
