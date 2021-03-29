@@ -49,9 +49,10 @@ const InactiveBoxList = ({ sortParams }) => {
 
 	return (
 		<div>
-			<p className="p-0 text-sm font-light">
+			<p className="p-0 text-xs font-light">
 				Boxes with "RETIRED" status signify a manually retired box whose
-				operations were not all marked as "COMPLETE".
+				operations were not all marked as "COMPLETE". Boxes are shown in
+				order of newest to oldest.
 			</p>
 			<p className="p-0 text-sm font-light">
 				Only the most recent boxes are shown (up to 100)
@@ -91,6 +92,14 @@ const InactiveBoxList = ({ sortParams }) => {
 									{box.status === 3
 										? "RETIRED"
 										: getStatus(box.status)}
+									<p className="text-sm font-light">
+										{new Date(
+											box.completed_at
+										).toLocaleDateString("en-US", {
+											hour: "numeric",
+											minute: "numeric",
+										})}
+									</p>
 								</td>
 								<td className="p-4">
 									<Link to={`/box/${box.id}`}>

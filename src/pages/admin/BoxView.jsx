@@ -89,6 +89,7 @@ const BoxView = (props) => {
 						newOP.interruptions.length - 1
 					].resumed_by = selectedEmployee.name;
 				}
+				newOP.current_op = opListOrder;
 				break;
 			case 3:
 				if (!newOP.hasOwnProperty("interruptions")) {
@@ -338,7 +339,59 @@ const BoxView = (props) => {
 										: null}
 								</div>
 								<div>
-									{/* TODO show start time and completed time and sum to show total time */}
+									<p>
+										Started at:{" "}
+										{op.hasOwnProperty("started_at")
+											? new Date(
+													op.started_at
+											  ).toLocaleDateString("en-US", {
+													hour: "numeric",
+													minute: "numeric",
+													timeZoneName: "short",
+											  })
+											: null}
+									</p>
+									<p>
+										Completed at:{" "}
+										{op.hasOwnProperty("completed_at")
+											? new Date(
+													op.completed_at
+											  ).toLocaleDateString("en-US", {
+													hour: "numeric",
+													minute: "numeric",
+													timeZoneName: "short",
+											  })
+											: null}
+									</p>
+									<p className="text-blue-400">
+										{(() => {
+											if (
+												op.hasOwnProperty(
+													"completed_at"
+												) &&
+												op.hasOwnProperty("started_at")
+											) {
+												const started = new Date(
+													op.started_at
+												);
+												const completed = new Date(
+													op.completed_at
+												);
+												const elapsedHourMinutes =
+													Math.abs(
+														started.getHours() -
+															completed.getHours()
+													) * 60;
+												const elapsedMinutes =
+													elapsedHourMinutes +
+													Math.abs(
+														started.getMinutes() -
+															completed.getMinutes()
+													);
+												return `${elapsedMinutes} mins`;
+											}
+										})()}
+									</p>
 								</div>
 								{getOperationButtons(op.status, op.list_order)}
 							</div>

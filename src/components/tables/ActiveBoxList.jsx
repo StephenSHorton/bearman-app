@@ -54,7 +54,7 @@ const ActiveBoxList = ({ sortParams }) => {
 
 	return (
 		<div>
-			<p className="p-0 text-sm font-light">
+			<p className="p-0 text-xs font-light">
 				Boxes can no longer be retired manually, they will become
 				"Inactive" when all of their operations are completed.
 			</p>
@@ -96,6 +96,11 @@ const ActiveBoxList = ({ sortParams }) => {
 									)}-500 font-semibold`}
 								>
 									{getStatus(box.status)}
+									<p className="p-0 text-sm font-light">
+										{box.current_op
+											? `Operation #${box.current_op}`
+											: null}
+									</p>
 								</td>
 								<td className="p-4">
 									<Link to={`/box/${box.id}`}>
