@@ -63,6 +63,13 @@ const BoxView = (props) => {
 		}
 		const operations = box.operations;
 		const oldOP = operations[indexOfOP];
+		if (!oldOP) {
+			alert("ERROR");
+			console.log(opListOrder);
+			console.log(indexOfOP);
+			console.log(box.operations);
+			return;
+		}
 		let newOP = {
 			...oldOP,
 			status: newStatus,
@@ -75,11 +82,13 @@ const BoxView = (props) => {
 			case 1:
 				delete newOP.updated_at;
 				delete newOP.updated_by;
+				delete newOP.started_at;
+				delete newOP.completed_at;
 				delete newOP.status;
 				delete newOP.interruptions;
 				break;
 			case 2:
-				if (oldOP.status === 1) {
+				if (!oldOP.hasOwnProperty("status") || oldOP.status === 1) {
 					newOP.started_at = new Date().getTime();
 				} else if (newOP.hasOwnProperty("interruptions")) {
 					newOP.interruptions[
@@ -236,9 +245,7 @@ const BoxView = (props) => {
 							<p className="mr-1">{getIcon(boxIcon2, 12)}</p>{" "}
 							<p>
 								QUANTITY:{" "}
-								<inpu className="text-blue-300">
-									{box.quantity}
-								</inpu>
+								<p className="text-blue-300">{box.quantity}</p>
 							</p>
 						</div>
 						<div className="flex items-center text-xl font-bold">
@@ -412,7 +419,50 @@ const BoxView = (props) => {
 						alert("Successfully deleted box.");
 					})
 					.catch((err) => {
-						alert("There was a problem deleting this box.");
+						alert("There was a problem retiring this box.");
+						console.log(err);
+					});
+			} else {
+				alert("Invalid Password.");
+			}
+		}
+	};
+	const handleRetire = () => {
+		if (!selectedEmployee) {
+			alert(
+				"Error: An employee must be selected in order to make changes."
+			);
+			return;
+		}
+		if (
+			window.confirm(
+				"Are you sure you want to retire this box? (You should only retire a box if you no longer want to see it in the active box list)"
+			)
+		) {
+			const response = window.prompt("Password");
+			if (response === "1234") {
+				HISTORY.push("/dashboard");
+				updateBox(box.id, {
+					...box,
+					retired: true,
+					is_active: false,
+					updated_by: selectedEmployee.name,
+					history: [
+						...box.history,
+						{
+							description: `Box retired`,
+							old_value: getStatus(box.status),
+							new_value: "RETIRED",
+							updated_at: new Date().getTime(),
+							updated_by: selectedEmployee.name,
+						},
+					],
+				})
+					.then(() => {
+						alert("Successfully retired box.");
+					})
+					.catch((err) => {
+						alert("There was a problem retiring this box.");
 						console.log(err);
 					});
 			} else {
@@ -446,14 +496,15 @@ const BoxView = (props) => {
 						<p className="ml-1">{getIcon(history, 6, "white")}</p>
 					</button>
 				</Link>
-				<Link>
-					<button
-						className="btn-danger flex items-center"
-						onClick={handleDelete}
-					>
-						Delete <p className="ml-1">{getIcon(trash, 6)}</p>
-					</button>
-				</Link>
+				<button className="flex items-center" onClick={handleRetire}>
+					Retire
+				</button>
+				<button
+					className="btn-danger flex items-center"
+					onClick={handleDelete}
+				>
+					Delete <p className="ml-1">{getIcon(trash, 6)}</p>
+				</button>
 			</div>
 			{box ? (
 				<BoxInformation />

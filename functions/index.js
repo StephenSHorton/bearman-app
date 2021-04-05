@@ -107,6 +107,7 @@ exports.onBoxChange = functions.firestore
 	.document("Boxes/{docId}")
 	.onUpdate((change, context) => {
 		const updatedDoc = change.after.data();
+		if (updatedDoc.retired === true) return;
 		let INPROGRESS = false;
 		let COMPLETED = true;
 		let INTERRUPTED = false;

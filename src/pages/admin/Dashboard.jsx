@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { boxIcon, getIcon, person } from "../../components/common/icons";
+// import SelectSortParam from "../../components/common/SelectSortParam";
 import ActiveBoxList from "../../components/tables/ActiveBoxList";
 import InactiveBoxList from "../../components/tables/InactiveBoxList";
 
 const Dashboard = () => {
 	const [showActiveBoxes, setShowActiveBoxes] = React.useState(true);
+	// const [sortP, setSortP] = React.useState("box_number");
 
 	return (
 		<div>
@@ -15,6 +17,8 @@ const Dashboard = () => {
 			{/* TODO Add graph view of boxes */}
 			<div className="flex justify-end my-5 space-x-4">
 				{/* Navigation */}
+				{/* TODO create sort button (check next line) */}
+				{/* <SelectSortParam sortP={sortP} setSortP={setSortP} /> */}
 				<button
 					className={`btn-${showActiveBoxes ? "info" : "warning"}`}
 					onClick={() => setShowActiveBoxes(!showActiveBoxes)}

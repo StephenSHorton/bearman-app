@@ -9,7 +9,11 @@ import {
 	getIcon,
 } from "../common/icons";
 import { Link } from "react-router-dom";
-import { getStatus, getStatusColor } from "../../functions/boxFunctions";
+import {
+	getSortedBoxes,
+	getStatus,
+	getStatusColor,
+} from "../../functions/boxFunctions";
 import BoxTotals from "./BoxTotals";
 import PartTotals from "./PartTotals";
 
@@ -80,37 +84,44 @@ const ActiveBoxList = ({ sortParams }) => {
 				</thead>
 				{boxes ? (
 					<tbody>
-						{boxes.map((box, index) => (
-							<tr key={index} className="text-center shadow-xl">
-								<td className="p-4">{getIcon(boxIcon, 6)}</td>
-								<IDRow box={box} />
-								<td>{`${box.model}`}</td>
-								<td>{box.quantity}</td>
-								{box.part_type === "Frames" ? (
-									<td>{`${box.serial_range_min} - ${box.serial_range_max}`}</td>
-								) : null}
-								<td>{box.box_number}</td>
-								<td
-									className={`bg-${getStatusColor(
-										box.status
-									)}-500 font-semibold`}
+						{getSortedBoxes(boxes, "box_number").map(
+							(box, index) => (
+								<tr
+									key={index}
+									className="text-center shadow-xl"
 								>
-									{getStatus(box.status)}
-									<p className="p-0 text-sm font-light">
-										{box.current_op
-											? `Operation #${box.current_op}`
-											: null}
-									</p>
-								</td>
-								<td className="p-4">
-									<Link to={`/box/${box.id}`}>
-										<button className="btn-primary rounded-full p-2">
-											{getIcon(arrowRight, 6)}
-										</button>
-									</Link>
-								</td>
-							</tr>
-						))}
+									<td className="p-4">
+										{getIcon(boxIcon, 6)}
+									</td>
+									<IDRow box={box} />
+									<td>{`${box.model}`}</td>
+									<td>{box.quantity}</td>
+									{box.part_type === "Frames" ? (
+										<td>{`${box.serial_range_min} - ${box.serial_range_max}`}</td>
+									) : null}
+									<td>{box.box_number}</td>
+									<td
+										className={`bg-${getStatusColor(
+											box.status
+										)}-500 font-semibold`}
+									>
+										{getStatus(box.status)}
+										<p className="p-0 text-sm font-light">
+											{box.current_op
+												? `Operation #${box.current_op}`
+												: null}
+										</p>
+									</td>
+									<td className="p-4">
+										<Link to={`/box/${box.id}`}>
+											<button className="btn-primary rounded-full p-2">
+												{getIcon(arrowRight, 6)}
+											</button>
+										</Link>
+									</td>
+								</tr>
+							)
+						)}
 					</tbody>
 				) : null}
 			</table>

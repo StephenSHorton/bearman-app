@@ -23,3 +23,35 @@ export const getStatusColor = (boxStatus) => {
 			return "red";
 	}
 };
+
+export const getSortedBoxes = (boxes, param) => {
+	switch (param) {
+		case "completed_at":
+			return boxes.sort((a, b) => {
+				const _a = new Date(a[param]).getTime();
+				const _b = new Date(b[param]).getTime();
+				let comparison = 0;
+				if (_a < _b) {
+					comparison = 1;
+				} else if (_a > _b) {
+					comparison = -1;
+				}
+				return comparison;
+			});
+		default:
+			console.log(param);
+			if (param) {
+				return boxes.sort((a, b) => {
+					const _a = a[param];
+					const _b = b[param];
+					let comparison = 0;
+					if (_a > _b) {
+						comparison = 1;
+					} else if (_a < _b) {
+						comparison = -1;
+					}
+					return comparison;
+				});
+			} else return boxes;
+	}
+};

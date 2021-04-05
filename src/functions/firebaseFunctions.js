@@ -40,12 +40,24 @@ export const createEmployee = (doc) => db.collection("Employees").add(doc);
 export const getEmployees = () => db.collection("Employees").get();
 
 //Testing
-// export const fixDocuments = () => {
-// 	db.collection("Boxes")
-// 		.get()
-// 		.then((querySnapshot) => {
-// 			querySnapshot.forEach((doc) =>
-// 				const d = doc.data()
-// 			);
-// 		});
-// };
+export const fixDocuments = () => {
+	db.collection("Boxes")
+		.get()
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				const d = doc.data();
+				d.operations.forEach((op) => {
+					let newOP = op;
+					if (newOP.hasOwnProperty("listOrder")) {
+						newOP.list_order = newOP.listOrder;
+						delete newOP.listOrder;
+					}
+					return newOP;
+				});
+				db.collection("Boxes")
+					.doc(doc.id)
+					.set(d, { merge: true })
+					.catch((err) => console.log(err));
+			});
+		});
+};
