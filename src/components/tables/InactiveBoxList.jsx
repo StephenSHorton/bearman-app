@@ -14,6 +14,7 @@ import {
 	getStatus,
 	getStatusColor,
 } from "../../functions/boxFunctions";
+import RetiredTotals from "./RetiredTotals";
 
 const InactiveBoxList = ({ sortParams }) => {
 	//TODO sort boxes by columns
@@ -58,9 +59,14 @@ const InactiveBoxList = ({ sortParams }) => {
 				operations were not all marked as "COMPLETE". Ordered by Box
 				Number.
 			</p>
-			<p className="p-0 text-sm font-light">
+			<p className="p-0 text-sm font-light text-yellow-400">
 				Only the most recent boxes are shown (up to 100)
 			</p>
+			{boxes ? (
+				<div>
+					<RetiredTotals boxes={boxes} />
+				</div>
+			) : null}
 			<table className="w-full">
 				<thead>
 					<tr className="bg-transparent">

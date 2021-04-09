@@ -39,7 +39,6 @@ export const getSortedBoxes = (boxes, param) => {
 				return comparison;
 			});
 		default:
-			console.log(param);
 			if (param) {
 				return boxes.sort((a, b) => {
 					const _a = a[param];

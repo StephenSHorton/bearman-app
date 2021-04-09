@@ -42,24 +42,26 @@ export const createEmployee = (doc) => db.collection("Employees").add(doc);
 export const getEmployees = () => db.collection("Employees").get();
 
 //Testing
-export const fixDocuments = () => {
-	db.collection("Boxes")
-		.get()
-		.then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				const d = doc.data();
-				d.operations.forEach((op) => {
-					let newOP = op;
-					if (newOP.hasOwnProperty("listOrder")) {
-						newOP.list_order = newOP.listOrder;
-						delete newOP.listOrder;
-					}
-					return newOP;
-				});
-				db.collection("Boxes")
-					.doc(doc.id)
-					.set(d, { merge: true })
-					.catch((err) => console.log(err));
-			});
-		});
-};
+// export const getBoxStatistics = () => {
+// 	db.collection("Boxes")
+// 		.get()
+// 		.then((querySnapshot) => {
+// 			let total = 0;
+// 			let partsTotal = 0;
+// 			querySnapshot.forEach((d) => {
+// 				const doc = d.data();
+// 				if (!doc.created_at) return;
+// 				const created_at = doc.created_at.toDate();
+// 				if (created_at.getMonth() < 3) return;
+// 				if (created_at.getFullYear() < 2021) return;
+// 				if (doc.is_active === true) return;
+// 				if (doc.status !== 4) return;
+// 				total += 1;
+// 				partsTotal += doc.quantity;
+// 			});
+// 			console.log(
+// 				`%cTotal Boxes:${total} Total Parts: ${partsTotal}`,
+// 				"color: #00ffcc; background: #003366; padding: 20px;"
+// 			);
+// 		});
+// };
