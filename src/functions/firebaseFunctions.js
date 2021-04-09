@@ -1,5 +1,7 @@
 import { db } from "../config/firebase";
 
+//TODO fix database by removing boxes that have the same id attribute or serialmin/max range
+
 //Boxes
 export const createBox = (doc) => db.collection("Boxes").add(doc);
 export const retrieveBox = (id) => db.collection("Boxes").doc(id).get();
