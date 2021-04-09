@@ -76,7 +76,7 @@ const BoxView = (props) => {
 			updated_at: new Date().getTime(),
 			updated_by: selectedEmployee.name,
 		};
-
+		let current_op;
 		switch (newStatus) {
 			//handle interruptions differently, everything else is default
 			case 1:
@@ -98,7 +98,7 @@ const BoxView = (props) => {
 						newOP.interruptions.length - 1
 					].resumed_by = selectedEmployee.name;
 				}
-				newOP.current_op = opListOrder;
+				current_op = opListOrder;
 				break;
 			case 3:
 				if (!newOP.hasOwnProperty("interruptions")) {
@@ -142,6 +142,7 @@ const BoxView = (props) => {
 				},
 			],
 		};
+		if (current_op) updatedDoc.current_op = current_op;
 		if (reason) {
 			updatedDoc.history = [
 				...box.history,
